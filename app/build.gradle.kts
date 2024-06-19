@@ -9,6 +9,8 @@ android {
     namespace = "com.melvin.compass"
     compileSdk = 34
 
+    android.buildFeatures.buildConfig = true
+
     defaultConfig {
         applicationId = "com.melvin.compass"
         minSdk = 24
@@ -20,6 +22,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "BASE_URL", "\"https://www.compass.com/about/\"")
     }
 
     buildTypes {

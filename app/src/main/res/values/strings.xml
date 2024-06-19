@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Compass</string>
+    <string name="load_compass_data">Load Compass data</string>
 </resources>
