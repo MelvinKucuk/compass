@@ -12,6 +12,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit
 
 @Module
@@ -25,6 +27,9 @@ class CompassModule {
     @Provides
     fun providesCompassRepository(@ApplicationContext context: Context): CompassCache =
         CompassCacheImpl(context)
+
+    @Provides
+    fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
 }
 
 @Module

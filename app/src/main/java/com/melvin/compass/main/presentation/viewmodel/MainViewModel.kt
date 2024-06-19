@@ -7,7 +7,7 @@ import com.melvin.compass.main.domain.CompassRepository
 import com.melvin.compass.main.domain.countWordOccurrences
 import com.melvin.compass.main.domain.generateTenthString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: CompassRepository,
-    private val compassCache: CompassCache
+    private val compassCache: CompassCache,
+    private val dispatcherIO: CoroutineDispatcher
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainState())
@@ -39,13 +40,13 @@ class MainViewModel @Inject constructor(
             result?.let {
                 val contentString = result.string()
 
-                val tenthCharacter = withContext(Dispatchers.IO) {
+                val tenthCharacter = withContext(dispatcherIO) {
                     contentString.generateTenthString()
                 }
 
                 compassCache.setTenthCharacterText(tenthCharacter)
 
-                val wordCounterMap = withContext(Dispatchers.IO) {
+                val wordCounterMap = withContext(dispatcherIO) {
                     contentString.countWordOccurrences()
                 }
 
