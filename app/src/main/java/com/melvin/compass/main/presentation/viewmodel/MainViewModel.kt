@@ -2,6 +2,7 @@ package com.melvin.compass.main.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.melvin.compass.main.domain.CompassCache
 import com.melvin.compass.main.domain.CompassRepository
 import com.melvin.compass.main.domain.countWordOccurrences
 import com.melvin.compass.main.domain.generateTenthString
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: CompassRepository
+    private val repository: CompassRepository,
+    private val compassCache: CompassCache
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainState())
@@ -41,15 +43,30 @@ class MainViewModel @Inject constructor(
                     contentString.generateTenthString()
                 }
 
+                compassCache.setTenthCharacterText(tenthCharacter)
+
                 val wordCounterMap = withContext(Dispatchers.IO) {
                     contentString.countWordOccurrences()
                 }
+
+                compassCache.setWordCounterMap(wordCounterMap)
 
                 _uiState.update {
                     it.copy(
                         tenthCharacterText = tenthCharacter,
                         wordCounterMap = wordCounterMap
                     )
+                }
+            } ?: run {
+                val tenthCharacter = compassCache.getTenthCharacterText()
+                val wordCounterMap = compassCache.getWordCounterMap()
+                if (tenthCharacter.isNotEmpty() && wordCounterMap.isNotEmpty()) {
+                    _uiState.update {
+                        it.copy(
+                            tenthCharacterText = tenthCharacter,
+                            wordCounterMap = wordCounterMap
+                        )
+                    }
                 }
             }
         }

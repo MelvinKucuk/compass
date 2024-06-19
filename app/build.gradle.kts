@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.daggerHiltAndroidPlugin)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -66,6 +67,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.datastore.preferences)
+    implementation(libs.kotlinx.serialization.json)
 
     // Hilt
     implementation(libs.hilt.android)
