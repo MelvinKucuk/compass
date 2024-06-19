@@ -6,12 +6,13 @@ import com.melvin.compass.main.domain.CompassRepository
 import com.melvin.compass.main.domain.countWordOccurrences
 import com.melvin.compass.main.domain.generateTenthString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,23 +33,22 @@ class MainViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
-            val tenthResult = async { repository.getCompassContent() }.await()
-            val wordCountResult = async { repository.getCompassContent() }.await()
+            val result = repository.getCompassContent()
+            result?.let {
+                val contentString = result.string()
 
-            tenthResult?.let {
-                val contentString = it.string()
-                _uiState.update { state ->
-                    state.copy(
-                        tenthCharacterText = contentString.generateTenthString(),
-                    )
+                val tenthCharacter = withContext(Dispatchers.IO) {
+                    contentString.generateTenthString()
                 }
-            }
 
-            wordCountResult?.let {
-                val contentString = it.string()
-                _uiState.update { state ->
-                    state.copy(
-                        wordCounterMap = contentString.countWordOccurrences()
+                val wordCounterMap = withContext(Dispatchers.IO) {
+                    contentString.countWordOccurrences()
+                }
+
+                _uiState.update {
+                    it.copy(
+                        tenthCharacterText = tenthCharacter,
+                        wordCounterMap = wordCounterMap
                     )
                 }
             }
