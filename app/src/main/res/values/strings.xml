@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Compass</string>
     <string name="load_compass_data">Load Compass data</string>
+    <string name="tenth_character">Tenth Character</string>
+    <string name="word_count">Word count</string>
 </resources>

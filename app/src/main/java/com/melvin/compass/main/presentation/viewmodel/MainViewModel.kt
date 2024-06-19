@@ -3,7 +3,10 @@ package com.melvin.compass.main.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.melvin.compass.main.domain.CompassRepository
+import com.melvin.compass.main.domain.countWordOccurrences
+import com.melvin.compass.main.domain.generateTenthString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,11 +32,23 @@ class MainViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
-            val result = repository.getCompassContent()
-            result?.let {
-                _uiState.update {
-                    it.copy(
-                        compassContent = result.string()
+            val tenthResult = async { repository.getCompassContent() }.await()
+            val wordCountResult = async { repository.getCompassContent() }.await()
+
+            tenthResult?.let {
+                val contentString = it.string()
+                _uiState.update { state ->
+                    state.copy(
+                        tenthCharacterText = contentString.generateTenthString(),
+                    )
+                }
+            }
+
+            wordCountResult?.let {
+                val contentString = it.string()
+                _uiState.update { state ->
+                    state.copy(
+                        wordCounterMap = contentString.countWordOccurrences()
                     )
                 }
             }
