@@ -1,0 +1,1 @@
+This repository contains a simple application developed as a solution to a take-home challenge. The application is designed to perform two requests simultaneously and process the content from the specified URL.
